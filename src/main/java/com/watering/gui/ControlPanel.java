@@ -287,6 +287,9 @@ public class ControlPanel extends JPanel {
         gardenPanel.setPlants(plants);
         plantListPanel.refreshList();
 
+        // ← احسب الـ accuracy هون كمان
+        lastAccuracy = perceptron.calculateAccuracy(plants);
+
         int count = 0;
         for (Plant plant : plants) {
             if (plant.getPredictedNeedsWater() == 1) count++;
@@ -294,6 +297,8 @@ public class ControlPanel extends JPanel {
 
         outputArea.append("\n✓ Predictions complete.\n");
         outputArea.append("→ Plants predicted to need water: " + count + "\n");
+        outputArea.append("→ Accuracy: "
+                + String.format(java.util.Locale.US, "%.2f", lastAccuracy) + "%\n");
 
         updateResults();
     }
@@ -361,7 +366,32 @@ public class ControlPanel extends JPanel {
                 + String.format(java.util.Locale.US, "%.2f", optimizedCost) + "\n");
         outputArea.append("→ Improvement: "
                 + String.format(java.util.Locale.US, "%.2f", improvementPercent) + "%\n");
+        outputArea.append("\n--- Watering Order ---\n");
 
+// Random path
+        outputArea.append("Initial (random) path:\n");
+        StringBuilder randomStr = new StringBuilder();
+        for (int i = 0; i < randomPath.size(); i++) {
+            Plant p = randomPath.get(i);
+            int idx = plants.indexOf(p) + 1;
+            randomStr.append("P").append(idx);
+            if (i < randomPath.size() - 1) randomStr.append(" → ");
+        }
+        outputArea.append("  " + randomStr + "\n");
+        outputArea.append("  Cost: " + String.format(java.util.Locale.US, "%.2f", randomCost) + "\n");
+
+// Optimized path
+        outputArea.append("Optimized path:\n");
+        StringBuilder optStr = new StringBuilder();
+        for (int i = 0; i < optimizedOrder.size(); i++) {
+            Plant p = optimizedOrder.get(i);
+            int idx = plants.indexOf(p) + 1;
+            optStr.append("P").append(idx);
+            if (i < optimizedOrder.size() - 1) optStr.append(" → ");
+        }
+        outputArea.append("  " + optStr + "\n");
+        outputArea.append("  Cost: " + String.format(java.util.Locale.US, "%.2f", optimizedCost) + "\n");
+        outputArea.append("----------------------\n");
         mainFrame.tabbedPane.setSelectedIndex(2);
 
         updateResults();

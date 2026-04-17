@@ -23,14 +23,16 @@ public class SimulatedAnnealing {
         public final double temperature;
         public final int    totalSwaps;
         public final boolean accepted;
+        public final List<String> currentOrder;  // ← جديد
 
-        public StepRecord(int step, double cost,
-                          double temperature, int totalSwaps, boolean accepted) {
-            this.step        = step;
-            this.cost        = cost;
-            this.temperature = temperature;
-            this.totalSwaps  = totalSwaps;
-            this.accepted    = accepted;
+        public StepRecord(int step, double cost, double temperature,
+                          int totalSwaps, boolean accepted, List<String> currentOrder) {
+            this.step         = step;
+            this.cost         = cost;
+            this.temperature  = temperature;
+            this.totalSwaps   = totalSwaps;
+            this.accepted     = accepted;
+            this.currentOrder = currentOrder;
         }
     }
 
@@ -155,16 +157,24 @@ public class SimulatedAnnealing {
             }
 
             if (step % SAMPLE == 0) {
+                List<String> order = new ArrayList<>();
+                for (Plant p : currentSolution)
+                    order.add(p.getPlantTypeShort());
+
                 history.add(new StepRecord(step, currentCost,
-                        currentTemperature, totalSwaps, accept));
+                        currentTemperature, totalSwaps, accept, order));
             }
 
             currentTemperature *= (1 - coolingRate);
         }
 
         // always add final point
-        history.add(new StepRecord(step, bestCost, currentTemperature, totalSwaps, true));
+        List<String> finalOrder = new ArrayList<>();
+        for (Plant p : bestSolution)
+            finalOrder.add(p.getPlantTypeShort());
 
+        history.add(new StepRecord(step, bestCost,
+                currentTemperature, totalSwaps, true, finalOrder));
         return bestSolution;
     }
 
