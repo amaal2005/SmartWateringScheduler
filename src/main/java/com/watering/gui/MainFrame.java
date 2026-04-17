@@ -10,6 +10,7 @@ public class MainFrame extends JFrame {
     private ControlPanel    controlPanel;
     private PlantListPanel  plantListPanel;
     private PerceptronPanel perceptronPanel;
+    private SAPanel saPanel;
 
     /** The tabbed pane is package-accessible so ControlPanel can switch tabs */
     JTabbedPane tabbedPane;
@@ -33,6 +34,7 @@ public class MainFrame extends JFrame {
         gardenPanel     = new GardenPanel();
         plantListPanel  = new PlantListPanel();
         perceptronPanel = new PerceptronPanel();
+        saPanel = new SAPanel();
 
         // ControlPanel needs references to garden + list + perceptron panels
         controlPanel = new ControlPanel(gardenPanel, plantListPanel, perceptronPanel, this);
@@ -51,6 +53,7 @@ public class MainFrame extends JFrame {
         tabbedPane.setFont(new Font("SansSerif", Font.PLAIN, 15));
         tabbedPane.addTab("🌿  Garden",      gardenTab);
         tabbedPane.addTab("📈  Perceptron",  perceptronPanel);
+        tabbedPane.addTab("🔥  SA Optimizer", saPanel);
 
         // ── root layout: [tabbedPane | controlPanel] ──────────────────────
         JPanel rootPanel = new JPanel(new BorderLayout(16, 0));
@@ -62,4 +65,6 @@ public class MainFrame extends JFrame {
         setContentPane(rootPanel);
         setVisible(true);
     }
+    public SAPanel getSaPanel() { return saPanel; }
+
 }

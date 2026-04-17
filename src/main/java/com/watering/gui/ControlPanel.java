@@ -334,15 +334,18 @@ public class ControlPanel extends JPanel {
         Collections.shuffle(randomPath);
 
         SimulatedAnnealing sa = new SimulatedAnnealing(1000, 0.03);
-
         double randomCost = sa.calculateCost(randomPath, allPlantsThatNeedWater);
 
-        List<Plant> optimizedOrder = sa.optimize(selectedPlantsToWater, allPlantsThatNeedWater);
+        List<SimulatedAnnealing.StepRecord> saHistory = new ArrayList<>();
+        List<Plant> optimizedOrder = sa.optimizeWithHistory(
+                selectedPlantsToWater, allPlantsThatNeedWater, saHistory);
         double optimizedCost = sa.calculateCost(optimizedOrder, allPlantsThatNeedWater);
         lastPathCost = optimizedCost;
 
         gardenPanel.setRandomPath(randomPath);
         gardenPanel.setOptimizedPath(optimizedOrder);
+
+        mainFrame.getSaPanel().showResults(saHistory, randomCost, optimizedCost);
 
         double improvement = randomCost - optimizedCost;
         double improvementPercent = (randomCost != 0)
@@ -359,8 +362,7 @@ public class ControlPanel extends JPanel {
         outputArea.append("→ Improvement: "
                 + String.format(java.util.Locale.US, "%.2f", improvementPercent) + "%\n");
 
-        // Switch back to Garden tab so user sees the path
-        mainFrame.tabbedPane.setSelectedIndex(0);
+        mainFrame.tabbedPane.setSelectedIndex(2);
 
         updateResults();
     }
